@@ -8,7 +8,7 @@ from PIL import Image
 import torch
 from torch.utils.data import Dataset
 
-from runlength import rle_decode
+from encodings.runlength import rle_decode
 
 
 class ImgDataset(Dataset):

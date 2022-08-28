@@ -33,5 +33,4 @@ class UpConv(nn.Module):
         
         x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
-        
         return x

@@ -3,6 +3,7 @@ import torch.nn.functional as F
 
 from . import conv3x3
 
+
 class DownConv(nn.Module):
     def __init__(self, in_channels, out_channels, pooling=True):
         super(DownConv, self).__init__()
@@ -23,5 +24,5 @@ class DownConv(nn.Module):
         before_pool = x
         if self.pooling:
             x = self.pool(x)
-        return x, before_pooling
+        return x, before_pool
 
