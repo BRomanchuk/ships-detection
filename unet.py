@@ -7,6 +7,15 @@ from conv.upconv import UpConv
 
 class UNet(nn.Module):
     def __init__(self, num_classes, in_channels=3, depth=5, start_filters=64, up_mode='transpose', merge_mode='concat'):
+        """
+        Creates an instance of the UNet
+        :param num_classes: number of classes to segment
+        :param in_channels: number of input channels in the input image
+        :param depth: the depth of the UNet
+        :param start_filters: number of start filters
+        :param up_mode: up-convolution mode
+        :param merge_mode: merge mode
+        """
         super(UNet, self).__init__()
 
         # validation of the up_mode
@@ -66,24 +75,38 @@ class UNet(nn.Module):
 
     @staticmethod
     def weight_init(m):
+        """
+        Method that inits the weights of the model
+        :param m: module of the network
+        :return:
+        """
         if isinstance(m, nn.Conv2d):
             nn.init.xavier_normal(m.weight)
             nn.init.constant(m.bias, 0)
 
     def reset_params(self):
+        """
+        Resets the weights of the network
+        :return:
+        """
         for i, m in enumerate(self.modules()):
             self.weight_init(m)
 
     def forward(self, x):
+        """
+        Forwards image through the blocks of UNet and creates the mask
+        :param x: image
+        :return: predicted mask
+        """
         encoder_outs = []
-
+        # encoder path
         for i, module in enumerate(self.down_convs):
             x, before_pool = module(x)
             encoder_outs.append(before_pool)
-
+        # decoder path
         for i, module in enumerate(self.up_convs):
             before_pool = encoder_outs[-(i + 2)]
             x = module(before_pool, x)
-
+        # final convolution layer
         x = x.conv_final(x)
         return x
