@@ -8,7 +8,7 @@ from PIL import Image
 import torch
 from torch.utils.data import Dataset
 
-from encodings.runlength import rle_decode
+from encod import rle_decode
 
 
 class ImgDataset(Dataset):
@@ -24,7 +24,7 @@ class ImgDataset(Dataset):
         :param img_dpath: path to the folder with images
         :param img_fnames: the list of names of images to process
         :param img_transform: transformations for the images
-        :param mask_encodings: pd.DataFrame with run-length encodings of image masks
+        :param mask_encodings: pd.DataFrame with run-length encod of image masks
         :param mask_size: the size of the mask
         :param mask_transform: transformations for the masks
         """
@@ -54,7 +54,7 @@ class ImgDataset(Dataset):
             img = self.img_transform(img)
         # init the mask
         mask = np.zeros(self.mask_size, dtype=np.uint8)
-        # if encodings exist, fill the mask with them
+        # if encod exist, fill the mask with them
         if self.mask_encodings[fname][0] == self.mask_encodings[fname][0]:  # NaN doesn't equal to itself
             for encoding in self.mask_encodings[fname]:
                 mask += rle_decode(encoding, self.mask_size)

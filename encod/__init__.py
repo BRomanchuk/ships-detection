@@ -3,10 +3,10 @@ import numpy as np
 
 def get_mask_encodings(annos, fnames):
     """
-    Collects the encodings of all ships for each image
+    Collects the encod of all ships for each image
     :param annos: pd.DataFrame with image annotations
     :param fnames: list of names of images
-    :return: pd.DataFrame of encodings of all ships in the image
+    :return: pd.DataFrame of encod of all ships in the image
     """
     a = annos[annos['ImageId'].isin(fnames)]
     return a.groupby('ImageId')['EncodedPixels'].apply(lambda x: x.tolist()).to_dict()
@@ -14,7 +14,7 @@ def get_mask_encodings(annos, fnames):
 
 def rle_decode(mask_rle, shape=(768, 768)):
     """
-    Decodes run-length encodings into image mask
+    Decodes run-length encod into image mask
     :param mask_rle: string with run-length code
     :param shape: shape of the image
     :return: image mask
@@ -30,7 +30,7 @@ def rle_decode(mask_rle, shape=(768, 768)):
 
 def rle_encode(im):
     """
-    Encodes image mask into run-length encodings
+    Encodes image mask into run-length encod
     :param im: image mask
     :return: run-length encoding of the mask
     """

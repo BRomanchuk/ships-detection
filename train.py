@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -8,7 +10,7 @@ from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 
 from dataset import ImgDataset
-from encodings.runlength import get_mask_encodings
+from encod import get_mask_encodings
 
 from model_params import model_params
 
@@ -65,18 +67,29 @@ def load_datasets(params):
     trn_transforms, tst_transforms, mask_transforms = transform_data()
 
     trn_ds = ImgDataset(trn_dpath, trn_fnames, trn_transforms, get_mask_encodings(anns, trn_fnames),
-                          orgnl_img_size, mask_transforms)
+                         orgnl_img_size, mask_transforms)
     tst_ds = ImgDataset(trn_dpath, tst_fnames, tst_transforms, get_mask_encodings(anns, tst_fnames),
                          orgnl_img_size, mask_transforms)
-    trn_dl = DataLoader(trn_ds, batch_size=model_params.batch_size, num_workers=model_params.num_workers)
-    tst_dl = DataLoader(tst_ds, batch_size=model_params.batch_size, num_workers=model_params.num_workers)
+    trn_dl = DataLoader(trn_ds,
+                        batch_size=model_params.batch_size,
+                        shuffle=True,
+                        pin_memory=torch.cuda.is_available(),
+                        num_workers=model_params.num_workers)
+    tst_dl = DataLoader(tst_ds,
+                        batch_size=model_params.batch_size,
+                        shuffle=False,
+                        pin_memory=torch.cuda.is_available(),
+                        num_workers=model_params.num_workers)
 
     return trn_dl, tst_dl
 
 
 # init model and optimizer
 def get_model():
-    mdl = UNet(2, depth=model_params.unet_depth, start_filters=model_params.unet_start_filters, merge_mode='concat')
+    mdl = UNet(2,
+               depth=model_params.unet_depth,
+               start_filters=model_params.unet_start_filters,
+               merge_mode='concat').cuda()
     opt = torch.optim.Adam(model.parameters(), lr=model_params.lr)
     return mdl, opt
 
