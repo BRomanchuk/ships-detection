@@ -1,12 +1,35 @@
 import torch
+from torchvision.transforms import transforms
 
-from unet import UNet
+from PIL import Image
 
-from model_params import model_params
+from model.unet import UNet
+
+from model.model_params import model_params
 
 if __name__ == '__main__':
     # create a model and load the weights
     model = UNet(2, depth=model_params.unet_depth, start_filters=model_params.unet_start_filters, merge_mode='concat')
     model.load_state_dict(torch.load('weights/model_weights.pt'))
     model.eval()
-    # TODO test loader and saving the predicted mask
+
+    transform = transforms.Compose([
+        transforms.PILToTensor()
+    ])
+
+    # path to the test photo
+    test_path = './test_photos/test_photo.jpg'
+
+    # open PIL test image
+    img = Image.open(test_path)
+
+    # convert the PIL image to Torch tensor
+    img_tensor = transform(img).float().cuda()
+    img_tensor = img_tensor[None, :]
+
+    # predicted Torch tensor
+    predicted_tensor = model(img_tensor).cpu().detach()[0]
+
+    #
+    # pred_mask = transforms.ToPILImage(predicted_tensor)
+

@@ -1,5 +1,3 @@
-import os
-
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -9,12 +7,12 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 
-from dataset import ImgDataset
-from encod import get_mask_encodings
+from model.dataset import ImgDataset
+from model.encod import get_mask_encodings
 
-from model_params import model_params
+from model.model_params import model_params
 
-from unet import UNet
+from model.unet import UNet
 
 
 # get the names of train and test files, and the DataFrame with annotations
@@ -127,7 +125,7 @@ def train_model(trn_dl, tst_dl, mdl, opt):
 
                 # save model weights if current test loss is less than previous one
                 if len(tst_losses) > 0 and test_loss < tst_losses[-1]:
-                    torch.save(model.state_dict(), 'weights/model_weights.pt')
+                    torch.save(model.state_dict(), 'model/weights/model_weights.pt')
 
                 tst_losses.append(test_loss)  # append test loss
                 mdl.train()  # turn on training mode
