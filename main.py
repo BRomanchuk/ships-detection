@@ -30,6 +30,7 @@ if __name__ == '__main__':
     # predicted Torch tensor
     predicted_tensor = model(img_tensor).cpu().detach()[0]
 
-    #
-    # pred_mask = transforms.ToPILImage(predicted_tensor)
+    # transform tensor into image and save the mask
+    pred_mask = transforms.ToPILImage()(predicted_tensor).convert('RGB')
+    pred_mask.save('./test_photos/result_masks/pred_mask.jpg')
 
